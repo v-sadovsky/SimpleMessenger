@@ -1,4 +1,4 @@
-package friends_manager
+package main
 
 import (
 	"encoding/json"
@@ -27,8 +27,8 @@ func main() {
 		setReady(true)
 	}()
 
-	log.Println("Starting Friends manager service on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Starting Friends manager service on port :82")
+	log.Fatal(http.ListenAndServe(":82", nil))
 }
 
 func handleLiveness(w http.ResponseWriter, r *http.Request) {

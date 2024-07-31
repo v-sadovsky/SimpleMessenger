@@ -1,4 +1,4 @@
-package auth_service
+package main
 
 import (
 	"encoding/json"
@@ -27,8 +27,8 @@ func main() {
 		setReady(true)
 	}()
 
-	log.Println("Starting Auth service on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Starting Auth service on port :80")
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
 func handleLiveness(w http.ResponseWriter, r *http.Request) {

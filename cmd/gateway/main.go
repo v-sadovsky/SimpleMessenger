@@ -1,4 +1,4 @@
-package gateway
+package main
 
 import (
 	"encoding/json"
@@ -27,8 +27,8 @@ func main() {
 		setReady(true)
 	}()
 
-	log.Println("Starting Gateway service on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Starting Gateway service on port :81")
+	log.Fatal(http.ListenAndServe(":81", nil))
 }
 
 func handleLiveness(w http.ResponseWriter, r *http.Request) {
