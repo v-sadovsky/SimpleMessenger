@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service-green
+  namespace: auth-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth-service
+      version: green
+  template:
+    metadata:
+      labels:
+        app: auth-service
+        version: green
+    spec:
+      containers:
+        - name: auth-service
+          image: docker.io/library/auth-service:v2.0.0
+          imagePullPolicy: "Never"
+          ports:
+            - containerPort: 80
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10

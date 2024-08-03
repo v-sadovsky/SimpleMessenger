@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  gateway:
+    build:
+      context: ./..
+      dockerfile: build/package/Dockerfile_gateway
+    ports:
+      - "8081:81"
+
+  auth_service:
+    build:
+      context: ./..
+      dockerfile: build/package/Dockerfile_auth
+    ports:
+      - "8080:80"
+    depends_on:
+      - gateway
+
+  profiles_service:
+    build:
+      context: ./..
+      dockerfile: build/package/Dockerfile_profiles_manager
+    ports:
+      - "8084:84"
+    depends_on:
+      - auth_service
+
+  friends_service:
+    build:
+      context: ./..
+      dockerfile: build/package/Dockerfile_friends_manager
+    ports:
+      - "8082:82"
+    depends_on:
+      - auth_service
+
+  messages_service:
+    build:
+      context: ./..
+      dockerfile: build/package/Dockerfile_messages_manager
+    ports:
+      - "8083:83"
+    depends_on:
+      - auth_service

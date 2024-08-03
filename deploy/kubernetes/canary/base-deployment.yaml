@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: base-app
+  namespace: canary-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: base-app
+  template:
+    metadata:
+      labels:
+        app: base-app
+    spec:
+      containers:
+        - name: base-app
+          image: docker.io/library/base-app:v1.0.0
+          imagePullPolicy: "Never"
+          ports:
+            - containerPort: 80
