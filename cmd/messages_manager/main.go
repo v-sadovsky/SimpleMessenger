@@ -18,6 +18,7 @@ var (
 )
 
 func main() {
+	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/health", handleLiveness)
 	http.HandleFunc("/ready", handleReadiness)
 
@@ -27,8 +28,12 @@ func main() {
 		setReady(true)
 	}()
 
-	log.Println("Starting Messages manager service on port :83")
+	log.Println("Starting Messages manager service v1.0.0 on port :83")
 	log.Fatal(http.ListenAndServe(":83", nil))
+}
+
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Welcome to Messages manager Service v1.0.0!\n"))
 }
 
 func handleLiveness(w http.ResponseWriter, r *http.Request) {

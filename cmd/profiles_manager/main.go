@@ -18,6 +18,7 @@ var (
 )
 
 func main() {
+	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/health", handleLiveness)
 	http.HandleFunc("/ready", handleReadiness)
 
@@ -27,8 +28,12 @@ func main() {
 		setReady(true)
 	}()
 
-	log.Println("Starting Profiles manager service on port :84")
+	log.Println("Starting Profiles manager service v1.0.0 on port :84")
 	log.Fatal(http.ListenAndServe(":84", nil))
+}
+
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Welcome to Profiles manager Service v1.0.0!\n"))
 }
 
 func handleLiveness(w http.ResponseWriter, r *http.Request) {

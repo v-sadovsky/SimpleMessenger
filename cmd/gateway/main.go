@@ -18,6 +18,7 @@ var (
 )
 
 func main() {
+	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/health", handleLiveness)
 	http.HandleFunc("/ready", handleReadiness)
 
@@ -27,8 +28,12 @@ func main() {
 		setReady(true)
 	}()
 
-	log.Println("Starting Gateway service on port :81")
+	log.Println("Starting Gateway service v1.0.0 on port :81")
 	log.Fatal(http.ListenAndServe(":81", nil))
+}
+
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Welcome to Gateway Service v1.0.0!\n"))
 }
 
 func handleLiveness(w http.ResponseWriter, r *http.Request) {

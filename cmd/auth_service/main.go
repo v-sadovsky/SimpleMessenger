@@ -18,7 +18,8 @@ var (
 )
 
 func main() {
-	http.HandleFunc("/health", handleLiveness)
+	http.HandleFunc("/", handleIndex)
+	http.HandleFunc("/health", handleStartup)
 	http.HandleFunc("/ready", handleReadiness)
 
 	// Simulate readiness after 5 seconds
@@ -27,11 +28,15 @@ func main() {
 		setReady(true)
 	}()
 
-	log.Println("Starting Auth service on port :80")
+	log.Println("Starting Auth service v2.0.0 on port :80")
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
-func handleLiveness(w http.ResponseWriter, r *http.Request) {
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Welcome to Auth Service v2.0.0!\n"))
+}
+
+func handleStartup(w http.ResponseWriter, r *http.Request) {
 	response := HealthStatus{Status: "ok"}
 	json.NewEncoder(w).Encode(response)
 }
