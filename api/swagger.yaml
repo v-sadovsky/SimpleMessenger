@@ -1,0 +1,419 @@
+swagger: '2.0'
+info:
+  version: v1.0.0
+  title: SimpleMessenger API
+  description: some details
+
+host: localhost
+basePath: /messenger/
+schemes:
+  - http
+
+paths:
+  /v1/profiles:
+    post:
+      description: Create a user profile
+      parameters:
+        - name: user
+          in: body
+          description: represents a new user profile in the database
+          schema:
+            $ref: '#/definitions/CreateUserRequest'
+      responses:
+        201:
+          description: User profile successfully created
+          schema:
+            $ref: '#/definitions/CreateUserResponse'
+
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+        409:
+          description: User already exists
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+  /v1/profiles{id}:
+    get:
+      description: Return user profile by the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: user profile ID
+      responses:
+        200:
+          description: User profile successfully returned
+          schema:
+            $ref: '#/definitions/GetUserResponse'
+
+        204:
+          description: No content
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+    put:
+      description: Update user profile by the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: user profile ID
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateUserRequest'
+          description: user profile update data
+      responses:
+        200:
+          description: User profile successfully updated
+          schema:
+            $ref: '#/definitions/UpdateUserResponse'
+        204:
+          description: No content
+          schema:
+            type: object
+        403:
+          description: Forrbidden
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+    delete:
+      description: Delete user profile by the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: user profile ID
+      responses:
+        200:
+          description: User profile successfully deleted
+          schema:
+            $ref: '#/definitions/GetUserResponse'
+        204:
+          description: No content
+          schema:
+            type: object
+        403:
+          description: Forrbidden
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+  /v1/friends{id}:
+    post:
+      description: Request a friendship from a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: user profile ID
+        - name: friendship
+          in: body
+          description: represents a data about users
+          schema:
+            $ref: '#/definitions/CreateUserFriendship'
+      responses:
+        200:
+          description: Request to user successfully sent
+          schema:
+            type: object
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+    get:
+      description: Return a list of user friends
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: user profile ID
+      responses:
+        200:
+          description: A list of user friends successfully returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GetUserResponse'
+        204:
+          description: No content
+          schema:
+            type: object
+        403:
+          description: Forrbidden
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+    put:
+      description: Confirm/Decline friendship request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: user profile ID
+        - name: accepted
+          in: query
+          type: boolean
+          required: true
+          description: whether friendship request accepted or not
+      responses:
+        200:
+          description: Response successfully sent
+          schema:
+            $ref: '#/definitions/UpdateUserResponse'
+        403:
+          description: Forrbidden
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+    delete:
+      description: Delete user profile by the specified ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: user profile ID
+        - name: friend_name
+          in: query
+          type: string
+          required: true
+          description: deleted user name
+      responses:
+        200:
+          description: User successfully deleted from friends
+          schema:
+            $ref: '#/definitions/GetUserResponse'
+        403:
+          description: Forrbidden
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+  /v1/chats{id}:
+    post:
+      description: Send a message to a friend
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: user profile ID
+        - name: data
+          in: body
+          description: represents a data about users
+          schema:
+            $ref: '#/definitions/SendMessage'
+      responses:
+        200:
+          description: Message successfully sent
+          schema:
+            type: object
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+    get:
+      description: Receive a messages from friends
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: user profile ID
+      responses:
+        200:
+          description: A list messages successfully received
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GetMessages'
+        204:
+          description: No content
+          schema:
+            type: object
+        403:
+          description: Forrbidden
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+
+definitions:
+  ErrorMessage:
+    type: object
+    properties:
+      message:
+        type: string
+
+  CreateUserRequest:
+    type: object
+    required:
+      - name
+      - email
+      - password
+    properties:
+      name:
+        type: string
+        example: user_123
+      email:
+        type: string
+        example: user_123@mail.ru
+      password:
+        type: string
+        example: asTR3k!90d
+      photo:
+        type: string
+        example: https://image_path
+
+  CreateUserResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+
+  GetUserResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: user_123
+      email:
+        type: string
+        example: user_123@mail.ru
+      photo:
+        type: string
+        example: https://image_path
+
+  UpdateUserRequest:
+    type: object
+    properties:
+      name:
+        type: string
+        example: user_123
+      email:
+        type: string
+        example: user_123@mail.ru
+      password:
+        type: string
+        example: asgo3RTnl!kdr5
+      photo:
+        type: string
+        example: https://image_path
+
+  UpdateUserResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: user_123
+      email:
+        type: string
+        example: user_123@mail.ru
+      password:
+        type: string
+        example: asgo3RTnl!kdr5
+      photo:
+        type: string
+        example: https://image_path
+
+  CreateUserFriendship:
+    type: object
+    required:
+      - friend_name
+      - user_name
+    properties:
+      friend_name:
+        type: string
+        example: user_123
+      user_name:
+        type: string
+        example: user_124
+      user_photo:
+        type: string
+        example: https://image_path
+
+  SendMessage:
+    type: object
+    required:
+      - friend_name
+      - message
+    properties:
+      friend_name:
+        type: string
+        example: user_123
+      message:
+        type: string
+        example: some message
+
+  GetMessages:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      user_name:
+        type: string
+        example: user_123
+      message:
+        type: string
+        example: some text
+
