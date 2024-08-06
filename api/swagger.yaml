@@ -4,7 +4,7 @@ info:
   title: SimpleMessenger API
   description: some details
 
-host: localhost
+host: localhost:8080
 basePath: /messenger/
 schemes:
   - http
@@ -13,6 +13,8 @@ paths:
   /v1/profiles:
     post:
       description: Create a user profile
+      consumes: ['application/json']
+      produces: ['application/json']
       parameters:
         - name: user
           in: body
@@ -40,9 +42,11 @@ paths:
           schema:
             $ref: '#/definitions/ErrorMessage'
 
-  /v1/profiles{id}:
+  /v1/profiles/{id}:
     get:
       description: Return user profile by the specified ID
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -67,6 +71,8 @@ paths:
 
     put:
       description: Update user profile by the specified ID
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -99,6 +105,8 @@ paths:
 
     delete:
       description: Delete user profile by the specified ID
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
