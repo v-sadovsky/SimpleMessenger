@@ -99,39 +99,147 @@ func deleteUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, empty)
 }
 
-//func main() {
-//	http.HandleFunc("/messenger/v1/profiles", createUser)
-//
-//	log.Println("Starting Gateway service on port :8080")
-//	log.Fatal(http.ListenAndServe(":8080", nil))
-//}
-//
-//func createUser(w http.ResponseWriter, r *http.Request) {
-//	data, err := io.ReadAll(r.Body)
-//	if err != nil {
-//		fmt.Println(err)
-//		return
-//	}
-//	fmt.Println(string(data))
-//
-//	var request models.CreateUserRequest
-//	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&request); err != nil {
-//		fmt.Println(err)
-//		http.Error(w, err.Error(), http.StatusBadRequest)
-//	}
-//
-//	if err := request.Validate(strfmt.Default); err != nil {
-//		http.Error(w, err.Error(), http.StatusBadRequest)
-//	}
-//
-//	// Business logic
-//	var userID int64 = 3
-//	//fmt.Printf("create user: %+v\n", request)
-//
-//	response := models.CreateUserResponse{ID: userID}
-//
-//	fmt.Println(response)
-//}
+func makeFriendship(c echo.Context) error {
+	id := c.Param("id")
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+	fmt.Println("UserId", userID)
+
+	var request models.CreateUserFriendship
+	body, _ := io.ReadAll(c.Request().Body)
+	fmt.Println(string(body))
+
+	if err := json.NewDecoder(bytes.NewReader(body)).Decode(&request); err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	if err := request.Validate(strfmt.Default); err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	// Business logic
+
+	return c.JSON(http.StatusOK, empty)
+}
+
+func getUserFriends(c echo.Context) error {
+	id := c.Param("id")
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	fmt.Println("UserId", userID)
+
+	// Business logic
+
+	response := []models.GetUserResponse{
+		models.GetUserResponse{
+			ID:    3,
+			Email: "friend1@mail.ru",
+			Name:  "friend1",
+		},
+		models.GetUserResponse{
+			ID:    7,
+			Email: "friend2@mail.ru",
+			Name:  "friend2",
+		},
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func handleFriendshipRequest(c echo.Context) error {
+	id := c.Param("id")
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+	fmt.Println("UserId", userID)
+
+	state := c.QueryParam("accepted")
+	accepted, err := strconv.ParseBool(state)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	// Business logic
+
+	response := models.AcceptResponse{
+		Status: &accepted,
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func deleteFriend(c echo.Context) error {
+	id := c.Param("id")
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	friendName := c.QueryParam("name")
+
+	// Business logic
+	_ = userID
+	_ = friendName
+
+	return c.JSON(http.StatusOK, empty)
+}
+
+func sendMessage(c echo.Context) error {
+	id := c.Param("id")
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+	fmt.Println("UserId", userID)
+
+	var request models.SendMessage
+	body, _ := io.ReadAll(c.Request().Body)
+	fmt.Println(string(body))
+
+	if err := json.NewDecoder(bytes.NewReader(body)).Decode(&request); err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	if err := request.Validate(strfmt.Default); err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	// Business logic
+
+	return c.JSON(http.StatusOK, empty)
+}
+
+func getMessages(c echo.Context) error {
+	id := c.Param("id")
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, httpErrorMsg(err))
+	}
+
+	fmt.Println("UserId", userID)
+
+	// Business logic
+
+	response := []models.GetMessages{
+		models.GetMessages{
+			ID:       3,
+			Message:  "hello",
+			UserName: "friend1",
+		},
+		models.GetMessages{
+			ID:       7,
+			Message:  "hi",
+			UserName: "friend2",
+		},
+	}
+	return c.JSON(http.StatusOK, response)
+}
 
 func main() {
 	e := echo.New()
@@ -141,7 +249,13 @@ func main() {
 	e.PUT("/messenger/v1/profiles/:id", updateUser)
 	e.DELETE("/messenger/v1/profiles/:id", deleteUser)
 
+	e.POST("/messenger/v1/friends/:id", makeFriendship)
+	e.GET("/messenger/v1/friends/:id", getUserFriends)
+	e.PUT("/messenger/v1/friends/:id", handleFriendshipRequest)
+	e.DELETE("/messenger/v1/friends/:id", deleteFriend)
+
+	e.POST("/messenger/v1/chats/:id", sendMessage)
+	e.GET("/messenger/v1/chats/:id", getMessages)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
-
-//curl -X POST -H 'Content-Type: application/json' -d '{"name":"user_123","email":"user_123@mail.ru","password":"asTR3k!90d","photo":"https://image_path"}' http://localhost:8080/messenger/v1/profiles

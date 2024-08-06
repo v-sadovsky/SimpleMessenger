@@ -95,7 +95,7 @@ paths:
           schema:
             type: object
         403:
-          description: Forrbidden
+          description: Forbidden
           schema:
             $ref: '#/definitions/ErrorMessage'
         500:
@@ -131,9 +131,11 @@ paths:
           schema:
             $ref: '#/definitions/ErrorMessage'
 
-  /v1/friends{id}:
+  /v1/friends/{id}:
     post:
       description: Request a friendship from a user
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -161,6 +163,8 @@ paths:
 
     get:
       description: Return a list of user friends
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -189,6 +193,8 @@ paths:
 
     put:
       description: Confirm/Decline friendship request
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -204,7 +210,7 @@ paths:
         200:
           description: Response successfully sent
           schema:
-            $ref: '#/definitions/UpdateUserResponse'
+            $ref: '#/definitions/AcceptResponse'
         403:
           description: Forrbidden
           schema:
@@ -215,7 +221,9 @@ paths:
             $ref: '#/definitions/ErrorMessage'
 
     delete:
-      description: Delete user profile by the specified ID
+      description: Delete friend by the specified name
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -233,7 +241,7 @@ paths:
           schema:
             $ref: '#/definitions/GetUserResponse'
         403:
-          description: Forrbidden
+          description: Forbidden
           schema:
             $ref: '#/definitions/ErrorMessage'
         500:
@@ -241,9 +249,11 @@ paths:
           schema:
             $ref: '#/definitions/ErrorMessage'
 
-  /v1/chats{id}:
+  /v1/chats/{id}:
     post:
       description: Send a message to a friend
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -271,6 +281,8 @@ paths:
 
     get:
       description: Receive a messages from friends
+      consumes: [ 'application/json' ]
+      produces: [ 'application/json' ]
       parameters:
         - name: id
           in: path
@@ -289,7 +301,7 @@ paths:
           schema:
             type: object
         403:
-          description: Forrbidden
+          description: Forbidden
           schema:
             $ref: '#/definitions/ErrorMessage'
         500:
@@ -398,6 +410,15 @@ definitions:
       user_photo:
         type: string
         example: https://image_path
+
+  AcceptResponse:
+    type: object
+    required:
+      - status
+    properties:
+      status:
+        type: boolean
+        example: 1
 
   SendMessage:
     type: object
