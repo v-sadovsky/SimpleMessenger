@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package github.com.v_sadovsky.simple_messenger.homework_4;
+
+import "api/profiles/messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/v_sadovsky/simple_messenger/homework_4/pkg/api/profiles;profiles";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "User profiles service";
+    version: "1.0";
+    contact: {
+      name: "gRPC-Gateway project";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      email: "none@example.com";
+    };
+    license: {
+      name: "BSD 3-Clause License";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
+    };
+  };
+  external_docs: {
+    url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    description: "More about gRPC-Gateway";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+  host: "localhost:8080";
+};
+
+// ProfilesService - user profiles service
+service ProfilesService {
+  // SaveProfileRequest - save a user profile
+  rpc SaveProfile(SaveProfileRequest) returns (SaveProfileResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/profiles"
+      body: "info"
+    };
+  }
+
+  // GetProfile - get user profile by id
+  rpc GetProfile(GetProfileRequest) returns (GetProfileResponse) {
+    option (google.api.http) = {get: "/api/v1/profiles/{id}"};
+  }
+
+  // ListProfiles - list all users
+  rpc ListProfiles(ListProfilesRequest) returns (ListProfilesResponse) {
+    option (google.api.http) = {get: "/api/v1/profiles"};
+  }
+}
