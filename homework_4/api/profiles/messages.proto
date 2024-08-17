@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package github.com.v_sadovsky.simple_messenger.homework_4;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/v_sadovsky/simple_messenger/homework_4/pkg/api/profiles;profiles";
+
+// UserInfo - информация о пользователе
+message UserInfo {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "UserInfo"
+      description: "UserInfo - информация о пользователе"
+      required: [
+        "name",
+        "email",
+        "password"
+      ]
+      example: "{\"name\": \"user_1\", \"email\": \"user1@test.gmail.com\", \"password\": \"qwerty\", \"photo\": \"https://my_storage.my_photo\"}"
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // name - имя пользователя
+  string name = 1 [
+    json_name = "name",
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 3
+  ];
+  // email - почта пользователя
+  string email = 2 [
+    json_name = "email",
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.email = true
+  ];
+  // password - пароль пользователя
+  string password = 3 [
+    json_name = "password",
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.pattern = "^[a-zA-Z0-9@$!%*?&]{8,}$"
+  ];
+  // photo - ссылка на фото пользователя
+  string photo = 4 [json_name = "photo"];
+}
+
+// Profile - full user model
+message Profile {
+  // id - уникальный идентификатор пользователя
+  uint64 id = 1 [json_name = "id"];
+  // info - данные пользователя
+  UserInfo info = 2 [json_name = "info"];
+}
+
+// SaveProfileRequest - запрос SaveProfile
+message SaveProfileRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SaveProfileRequest"
+      description: "SaveProfileRequest - запрос SaveProfile"
+      required: ["info"]
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+  // info - информация о пользователе
+  UserInfo info = 1 [
+    json_name = "info",
+    (buf.validate.field).required = true
+  ];
+}
+
+// SaveProfileResponse - ответ SaveProfile
+message SaveProfileResponse {
+  // id - уникальный идентификатор пользователя
+  uint64 id = 1 [json_name = "id"];
+}
+
+// GetProfileRequest - запрос  GetProfile
+message GetProfileRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetProfileRequest"
+      description: "GetProfileRequest - запрос профиля пользователя по id"
+      required: ["id"]
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+  // id - уникальный идентификатор пользователя
+  uint64 id = 1 [
+    json_name = "id",
+    (buf.validate.field).required = true
+  ];
+}
+
+// GetProfileResponse - ответ  GetProfile
+message GetProfileResponse {
+  // profile - user profile
+  Profile profile = 1 [json_name = "profile"];
+}
+
+// ListProfilesRequest - запрос ListProfiles
+message ListProfilesRequest {
+  // ids - массив идентификаторов пользователей
+  repeated uint64 ids = 1 [json_name = "id"];
+}
+
+// ListProfilesResponse - ответ ListProfiles
+message ListProfilesResponse {
+  // profiles - a list of user profiles
+  repeated Profile profiles = 1 [json_name = "profiles"];
+}
