@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package github.com.v_sadovsky.simple_messenger.homework_6;
+
+import "api/chat_service/messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/v_sadovsky/simple_messenger/homework_6/pkg/api/chat_service;chat_service";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Chat Service";
+    version: "1.0";
+    contact: {
+      name: "gRPC-Gateway project";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      email: "none@example.com";
+    };
+    license: {
+      name: "BSD 3-Clause License";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
+    };
+  };
+  external_docs: {
+    url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    description: "More about gRPC-Gateway";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+  host: "localhost:8080";
+};
+
+// ChatService - серивис отвечающий за обмен сообщениями между пользователями
+service ChatService {
+  // OpenChat - открыть существующий чат с другом (и получить все сообщения) либо создать новый чат (если еще нет)
+  rpc OpenChat(OpenChatRequest) returns (OpenChatResponse) {
+    option (google.api.http) = {get: "/api/v1/chats/{user_id}"};
+  }
+
+  // SendMessage - отправить сообщение пользователю
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/chats/{user_id}"
+      body: "*"
+    };
+  }
+}

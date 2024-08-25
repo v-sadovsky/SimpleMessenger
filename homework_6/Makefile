@@ -50,7 +50,7 @@ generate: .bin-deps .buf-generate .proto-format .proto-lint .tidy
 
 # Линтер proto файлов
 .proto-lint:
-	$(LOCAL_BIN)/protolint -config_path ./.protolint.yaml ./api/
+	$(LOCAL_BIN)/protolint -config_path ./.protolint.yaml ./proto/
 
 # Линтер
 lint: .proto-lint

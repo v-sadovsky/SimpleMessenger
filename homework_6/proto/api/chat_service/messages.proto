@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package github.com.v_sadovsky.simple_messenger.homework_6;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/v_sadovsky/simple_messenger/homework_6/pkg/api/chat_service;chat_service";
+
+// OpenChatRequestRequest - запрос OpenChat
+message OpenChatRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "OpenChatRequest"
+      description: "OpenChatRequest - запрос OpenChat"
+      required: ["user_id"] /* url-param */
+      required: ["friend_id"] /* query-param */
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // user_id - id пользователя, который запрашивает чат с сообщениями [url-parameter]
+  uint64 user_id = 1 [
+    json_name = "user_id",
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).uint64.gt = 0
+  ];
+
+  // friend_id - id друга, чат с которым хотим открыть [query-parameter]
+  uint64 friend_id = 2 [
+    json_name = "friend_id",
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).uint64.gt = 0
+  ];
+}
+
+// OpenChatResponse - ответ OpenChat
+message OpenChatResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "OpenChatResponse"
+      description: "OpenChatResponse - ответ OpenChatResponse"
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // chat_id - id чата с сообщениями
+  string chat_id = 1 [json_name = "chat_id"];
+
+  // messages - массив сообщений чата
+  repeated string messages = 2 [json_name = "chats"];
+}
+
+// SendMessageRequest - запрос SendMessage
+message SendMessageRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SendMessageRequest"
+      description: "SendMessageRequest - запрос SendMessage"
+      required: ["user_id"]
+      required: ["chat_id"]
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // user_id - id пользователя, который отправляет сообщение
+  uint64 user_id = 1 [
+    json_name = "user_id",
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).uint64.gt = 0
+  ];
+
+  // chat_id - id чата
+  uint64 chat_id = 2 [
+    json_name = "chat_id",
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).uint64.gt = 0
+  ];
+
+  // message - сообщение, отправляемое пользователем
+  string message = 3 [
+    json_name = "message",
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).string.min_len = 2
+  ];
+}
+
+// SendMessageResponse - ответ SendMessage
+message SendMessageResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SendMessageResponse"
+      description: "SendMessageResponse - ответ SendMessage"
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // timestamp - время добавления сообщения в чат
+  google.protobuf.Timestamp timestamp = 1 [json_name = "timestamp"];
+}

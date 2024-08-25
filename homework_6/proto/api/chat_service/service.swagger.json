@@ -1,0 +1,210 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Chat Service",
+    "version": "1.0",
+    "contact": {
+      "name": "gRPC-Gateway project",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway",
+      "email": "none@example.com"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "ChatService"
+    }
+  ],
+  "host": "localhost:8080",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/chats/{user_id}": {
+      "get": {
+        "summary": "OpenChat - открыть существующий чат с другом (и получить все сообщения) либо создать новый чат (если еще нет)",
+        "operationId": "ChatService_OpenChat",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/homework_6OpenChatResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "user_id - id пользователя, который запрашивает чат с сообщениями [url-parameter]",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "friend_id",
+            "description": "friend_id - id друга, чат с которым хотим открыть [query-parameter]",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      },
+      "post": {
+        "summary": "SendMessage - отправить сообщение пользователю",
+        "operationId": "ChatService_SendMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/homework_6SendMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "user_id - id пользователя, который отправляет сообщение",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChatServiceSendMessageBody"
+            }
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ChatServiceSendMessageBody": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "string",
+          "format": "uint64",
+          "title": "chat_id - id чата"
+        },
+        "message": {
+          "type": "string",
+          "title": "message - сообщение, отправляемое пользователем"
+        }
+      },
+      "description": "SendMessageRequest - запрос SendMessage",
+      "title": "SendMessageRequest",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      },
+      "required": [
+        "chat_id",
+        "message"
+      ]
+    },
+    "homework_6OpenChatResponse": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "string",
+          "title": "chat_id - id чата с сообщениями"
+        },
+        "chats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "messages - массив сообщений чата"
+        }
+      },
+      "description": "OpenChatResponse - ответ OpenChatResponse",
+      "title": "OpenChatResponse",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      }
+    },
+    "homework_6SendMessageResponse": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "title": "timestamp - время добавления сообщения в чат"
+        }
+      },
+      "description": "SendMessageResponse - ответ SendMessage",
+      "title": "SendMessageResponse",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "More about gRPC-Gateway",
+    "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+  }
+}
